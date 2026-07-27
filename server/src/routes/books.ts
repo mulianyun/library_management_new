@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import db from '../db/connection.js';
 import type { Book, BookInput, BorrowingRecordView } from '../types/models.js';
+import { calculateAvailableCopies, validateBookInput } from './book-input.js';
 
 const router = Router();
 
@@ -40,11 +41,9 @@ router.get('/:id', (req: Request, res: Response) => {
 
 // POST /api/books — 创建
 router.post('/', (req: Request, res: Response) => {
-  const { isbn, title, author, publisher, published_year, category, total_copies } = req.body as BookInput;
-  if (!isbn || !title || !author) {
-    return res.status(400).json({ error: 'ISBN、书名、作者为必填项' });
-  }
-  const copies = total_copies || 1;
+  const input = parseInput(req.body, res);
+  if (!input) return;
+  const { isbn, title, author, publisher, published_year, category, total_copies: copies } = input;
   const existing = db.prepare('SELECT id FROM books WHERE isbn = ?').get(isbn);
   if (existing) return res.status(409).json({ error: 'ISBN 已存在' });
   db.prepare(
@@ -59,20 +58,37 @@ router.post('/', (req: Request, res: Response) => {
 router.put('/:id', (req: Request, res: Response) => {
   const book = db.prepare('SELECT * FROM books WHERE id = ?').get(req.params.id) as Book | undefined;
   if (!book) return res.status(404).json({ error: '图书不存在' });
-  const { isbn, title, author, publisher, published_year, category, total_copies } = req.body as BookInput;
-  if (!isbn || !title || !author) {
-    return res.status(400).json({ error: 'ISBN、书名、作者为必填项' });
-  }
+  const input = parseInput(req.body, res);
+  if (!input) return;
+  const { isbn, title, author, publisher, published_year, category, total_copies: copies } = input;
   const dup = db.prepare('SELECT id FROM books WHERE isbn = ? AND id != ?').get(isbn, book.id);
   if (dup) return res.status(409).json({ error: 'ISBN 已存在' });
-  const copies = total_copies || 1;
-  const borrowed = book.total_copies - book.available_copies;
-  const newAvailable = Math.max(0, copies - borrowed);
+  const borrowed = (
+    db
+      .prepare(`SELECT COUNT(*) AS count FROM borrowing_records WHERE book_id = ? AND status = 'borrowed'`)
+      .get(book.id) as { count: number }
+  ).count;
+  let newAvailable: number;
+  try {
+    newAvailable = calculateAvailableCopies(copies, borrowed);
+  } catch (error) {
+    return res.status(409).json({ error: (error as Error).message });
+  }
   db.prepare(
     `UPDATE books SET isbn=?, title=?, author=?, publisher=?, published_year=?, category=?,
                      total_copies=?, available_copies=?,
                      updated_at=datetime('now','localtime') WHERE id=?`,
-  ).run(isbn, title, author, publisher || null, published_year || null, category || null, copies, newAvailable, book.id);
+  ).run(
+    isbn,
+    title,
+    author,
+    publisher || null,
+    published_year || null,
+    category || null,
+    copies,
+    newAvailable,
+    book.id,
+  );
   res.json({ data: { ok: true } });
 });
 
@@ -82,9 +98,9 @@ router.delete('/:id', (req: Request, res: Response) => {
   const book = db.prepare('SELECT * FROM books WHERE id = ?').get(req.params.id) as Book | undefined;
   if (!book) return res.status(404).json({ error: '图书不存在' });
   const active = (
-    db.prepare(`SELECT COUNT(*) AS c FROM borrowing_records WHERE book_id = ? AND status = 'borrowed'`).get(
-      book.id,
-    ) as { c: number }
+    db
+      .prepare(`SELECT COUNT(*) AS c FROM borrowing_records WHERE book_id = ? AND status = 'borrowed'`)
+      .get(book.id) as { c: number }
   ).c;
   if (active > 0) return res.status(409).json({ error: '该图书有未归还的借阅记录, 无法删除' });
   // schema 没有 ON DELETE CASCADE, 先清历史再删书
@@ -94,3 +110,12 @@ router.delete('/:id', (req: Request, res: Response) => {
 });
 
 export default router;
+
+function parseInput(body: unknown, res: Response): BookInput | null {
+  const result = validateBookInput(body);
+  if (!result.ok) {
+    res.status(400).json({ error: result.error });
+    return null;
+  }
+  return result.value;
+}

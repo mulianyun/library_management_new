@@ -62,9 +62,7 @@ export default function BookListPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-700 border border-red-200 px-4 py-3 rounded-md mb-4 text-sm">
-          {error}
-        </div>
+        <div className="bg-red-50 text-red-700 border border-red-200 px-4 py-3 rounded-md mb-4 text-sm">{error}</div>
       )}
 
       {loading ? (
@@ -90,10 +88,7 @@ export default function BookListPage() {
               {books.map((b) => (
                 <tr key={b.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    <Link
-                      to={`/books/${b.id}`}
-                      className="text-[var(--color-primary)] hover:underline font-medium"
-                    >
+                    <Link to={`/books/${b.id}`} className="text-[var(--color-primary)] hover:underline font-medium">
                       {b.title}
                     </Link>
                   </td>
@@ -111,12 +106,7 @@ export default function BookListPage() {
                       <Pencil />
                       编辑
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(b)}
-                      className="ml-1"
-                    >
+                    <Button variant="destructive" size="sm" onClick={() => handleDelete(b)} className="ml-1">
                       <Trash2 />
                       删除
                     </Button>

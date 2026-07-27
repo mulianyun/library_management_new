@@ -30,11 +30,7 @@ export default function BookDetailPage() {
 
   if (loading) return <Loading />;
   if (error) {
-    return (
-      <div className="bg-red-50 text-red-700 border border-red-200 px-4 py-3 rounded-md text-sm">
-        {error}
-      </div>
-    );
+    return <div className="bg-red-50 text-red-700 border border-red-200 px-4 py-3 rounded-md text-sm">{error}</div>;
   }
   if (!book) {
     return <p className="text-gray-400 text-center py-10">图书不存在</p>;
@@ -96,10 +92,7 @@ export default function BookDetailPage() {
               records.map((r) => (
                 <tr key={r.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    <Link
-                      to={`/members/${r.member_id}`}
-                      className="text-[var(--color-primary)] hover:underline"
-                    >
+                    <Link to={`/members/${r.member_id}`} className="text-[var(--color-primary)] hover:underline">
                       {r.member_name}
                     </Link>
                   </td>
@@ -108,9 +101,7 @@ export default function BookDetailPage() {
                   <td className="px-4 py-3 text-gray-700 tabular-nums">{r.return_date ?? '-'}</td>
                   <td className="px-4 py-3">
                     {r.status === 'borrowed' ? (
-                      <span className="inline-block px-2 py-0.5 rounded text-xs bg-red-100 text-red-700">
-                        借出中
-                      </span>
+                      <span className="inline-block px-2 py-0.5 rounded text-xs bg-red-100 text-red-700">借出中</span>
                     ) : (
                       <span className="inline-block px-2 py-0.5 rounded text-xs bg-green-100 text-green-700">
                         已归还
@@ -127,15 +118,7 @@ export default function BookDetailPage() {
   );
 }
 
-function DetailRow({
-  label,
-  value,
-  mono = false,
-}: {
-  label: string;
-  value: React.ReactNode;
-  mono?: boolean;
-}) {
+function DetailRow({ label, value, mono = false }: { label: string; value: React.ReactNode; mono?: boolean }) {
   return (
     <>
       <dt className="text-gray-500">{label}</dt>
