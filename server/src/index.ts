@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { initDB } from './db/schema.js';
+import booksRouter from './routes/books.js';
 
 const app = express();
 const PORT = 3000;
@@ -10,11 +11,10 @@ app.use(cors());
 app.use(express.json());
 
 // ── 路由挂载（功能模块实现后取消注释） ──
-// import booksRouter      from './routes/books.js';
 // import membersRouter    from './routes/members.js';
 // import dashboardRouter  from './routes/dashboard.js';
 // import borrowingsRouter from './routes/borrowings.js';
-// app.use('/api/books',       booksRouter);
+app.use('/api/books', booksRouter);
 // app.use('/api/members',     membersRouter);
 // app.use('/api/dashboard',   dashboardRouter);
 // app.use('/api/borrowings',  borrowingsRouter);

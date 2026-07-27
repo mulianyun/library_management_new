@@ -6,6 +6,7 @@
     "start": "tsx server/src/index.ts",
     "dev": "concurrently -n api,web -c red,cyan \"tsx server/src/index.ts\" \"npm --prefix client run dev\"",
     "check": "concurrently -n api,web \"tsc --noEmit\" \"npm --prefix client run check\"",
+    "test": "node --import tsx --test server/src/routes/book-input.test.ts",
     "lint": "oxlint",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check ."
