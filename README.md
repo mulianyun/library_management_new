@@ -29,10 +29,12 @@ npm run dev
 ## 命令
 
 ```bash
+npm start        # 仅启动后端 API
 npm run dev      # 启动开发服务器（前后端同时启动）
 npm run check    # TypeScript 类型检查（前后端同时）
 npm run lint     # oxlint 静态检查
 npm run fmt      # oxfmt 格式化代码
+npm run fmt:check # 检查代码格式但不修改文件
 ```
 
 ## 项目结构

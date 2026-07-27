@@ -1,6 +1,6 @@
-import express from "express";
-import cors from "cors";
-import { initDB } from "./db/schema.js";
+import express from 'express';
+import cors from 'cors';
+import { initDB } from './db/schema.js';
 
 const app = express();
 const PORT = 3000;
@@ -20,19 +20,19 @@ app.use(express.json());
 // app.use('/api/borrowings',  borrowingsRouter);
 
 // ── 健康检查 ──
-app.get("/api/health", (_req, res) => {
+app.get('/api/health', (_req, res) => {
   res.json({ ok: true });
 });
 
 // ── 404 ──
 app.use((_req, res) => {
-  res.status(404).json({ error: "Not found" });
+  res.status(404).json({ error: 'Not found' });
 });
 
 // ── 全局错误处理 ──
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);
-  res.status(500).json({ error: err.message || "Internal server error" });
+  res.status(500).json({ error: err.message || 'Internal server error' });
 });
 
 // ── 启动 ──
