@@ -47,7 +47,7 @@ export interface BorrowingRecord {
   borrow_date: string;
   due_date: string;
   return_date: string | null;
-  status: "borrowed" | "returned";
+  status: 'borrowed' | 'returned';
   created_at: string;
 }
 

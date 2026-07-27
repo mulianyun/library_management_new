@@ -1,4 +1,4 @@
-import db from "./connection.js";
+import db from './connection.js';
 
 export function initDB(): void {
   db.exec(`

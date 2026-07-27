@@ -1,11 +1,11 @@
-import { NavLink } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { NavLink } from 'react-router-dom';
+import { BookOpen } from 'lucide-react';
 
 const links = [
-  { to: "/", label: "首页" },
-  { to: "/books", label: "图书管理" },
-  { to: "/members", label: "会员管理" },
-  { to: "/borrowings", label: "借阅管理" },
+  { to: '/', label: '首页' },
+  { to: '/books', label: '图书管理' },
+  { to: '/members', label: '会员管理' },
+  { to: '/borrowings', label: '借阅管理' },
 ];
 
 export default function Navbar() {
@@ -19,7 +19,7 @@ export default function Navbar() {
           to={l.to}
           className={({ isActive }) =>
             `px-3 py-1.5 rounded-md font-medium transition-colors ${
-              isActive ? "text-[var(--color-primary)] font-semibold" : "text-gray-300 hover:text-white"
+              isActive ? 'text-[var(--color-primary)] font-semibold' : 'text-gray-300 hover:text-white'
             }`
           }
         >
