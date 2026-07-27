@@ -3,6 +3,9 @@ import Layout from './components/Layout';
 import BookDetailPage from './pages/books/BookDetailPage';
 import BookFormPage from './pages/books/BookFormPage';
 import BookListPage from './pages/books/BookListPage';
+import MemberListPage from './pages/members/MemberListPage';
+import MemberFormPage from './pages/members/MemberFormPage';
+import MemberDetailPage from './pages/members/MemberDetailPage';
 
 export default function App() {
   return (
@@ -13,13 +16,10 @@ export default function App() {
         <Route path="/books/new" element={<BookFormPage />} />
         <Route path="/books/:id" element={<BookDetailPage />} />
         <Route path="/books/:id/edit" element={<BookFormPage />} />
-        <Route path="/members" element={<p className="text-gray-400 text-center py-10">会员列表 — 待实现</p>} />
-        <Route path="/members/new" element={<p className="text-gray-400 text-center py-10">添加会员 — 待实现</p>} />
-        <Route path="/members/:id" element={<p className="text-gray-400 text-center py-10">会员详情 — 待实现</p>} />
-        <Route
-          path="/members/:id/edit"
-          element={<p className="text-gray-400 text-center py-10">编辑会员 — 待实现</p>}
-        />
+        <Route path="/members" element={<MemberListPage />} />
+        <Route path="/members/new" element={<MemberFormPage />} />
+        <Route path="/members/:id" element={<MemberDetailPage />} />
+        <Route path="/members/:id/edit" element={<MemberFormPage />} />
         <Route path="/borrowings" element={<p className="text-gray-400 text-center py-10">借阅列表 — 待实现</p>} />
         <Route path="/borrowings/new" element={<p className="text-gray-400 text-center py-10">借阅图书 — 待实现</p>} />
         <Route
