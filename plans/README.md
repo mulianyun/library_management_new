@@ -7,8 +7,9 @@
 | 后端运行时 | Node.js 26 + tsx |
 | 后端框架 | Express 4（纯 REST JSON API） |
 | 数据库 | SQLite（better-sqlite3，同步 API） |
-| 前端框架 | React + TypeScript |
+| 前端框架 | React 19 + TypeScript |
 | 前端构建 | Vite |
+| UI | shadcn/ui + Tailwind CSS |
 | 路由 | React Router v7 |
 | Lint | oxlint |
 | 格式化 | oxfmt |
@@ -63,14 +64,14 @@ A (项目初始化)
 
 | 任务 | 名称 | 阶段 | 依赖 | 可并行 |
 |---|---|---|---|---|
-| A | 项目初始化 | phase-1 | 无 | — |
-| B | 数据库层 + 类型 | phase-2 | A | C, D |
-| C | API 骨架 | phase-2 | A | B, D |
-| D | React 骨架 | phase-2 | A | B, C |
-| E | 图书模块（前后端） | phase-3 | B, C, D | F, G |
-| F | 会员模块（前后端） | phase-3 | B, C, D | E, G |
-| G | 仪表盘（前后端） | phase-3 | B, C, D | E, F |
-| H | 借阅模块（前后端） | phase-4 | B, C, D | — |
+| A | 项目初始化 | phase-1 | 无 | — | ✅ |
+| B | 数据库层 + 类型 | phase-2 | A | C, D | ✅ |
+| C | API 骨架 | phase-2 | A | B, D | ✅ |
+| D | React 骨架 | phase-2 | A | B, C | ✅ |
+| E | 图书模块（前后端） | phase-3 | B, C, D | F, G | — |
+| F | 会员模块（前后端） | phase-3 | B, C, D | E, G | — |
+| G | 仪表盘（前后端） | phase-3 | B, C, D | E, F | — |
+| H | 借阅模块（前后端） | phase-4 | B, C, D | — | — |
 
 ## API 一览
 
@@ -128,11 +129,7 @@ A (项目初始化)
 ## 验证
 
 ```bash
-# 终端1 — 后端
-npm start                          # http://localhost:3000
-
-# 终端2 — 前端
-cd client && npm install && npm run dev  # http://localhost:5173
+npm run dev                       # 前后端同时启动 :5173
 
 # 端到端测试
 # 1. 添加图书   2. 添加会员   3. 借书

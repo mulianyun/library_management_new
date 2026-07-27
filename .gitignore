@@ -1,0 +1,5 @@
+node_modules/
+dist/
+library.db
+*.db-journal
+*.db-wal

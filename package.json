@@ -1,0 +1,30 @@
+{
+  "name": "library-management",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n api,web -c red,cyan \"tsx server/src/index.ts\" \"npm --prefix client run dev\"",
+    "check": "concurrently -n api,web \"tsc --noEmit\" \"npm --prefix client run check\"",
+    "lint": "oxlint",
+    "fmt": "oxfmt"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/cors": "^2.8.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "concurrently": "^10.0.4",
+    "oxfmt": "^0.15.0",
+    "oxlint": "^0.15.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "allowScripts": {
+    "better-sqlite3@13.0.1": true
+  }
+}
