@@ -12,7 +12,7 @@ router.get('/stats', (_req: Request, res: Response) => {
     activeBorrows: countRows(`SELECT COUNT(*) AS c FROM borrowing_records WHERE status = 'borrowed'`),
     overdue: countRows(
       `SELECT COUNT(*) AS c FROM borrowing_records
-       WHERE status = 'borrowed' AND due_date < datetime('now','localtime')`,
+       WHERE status = 'borrowed' AND due_date < date('now','localtime')`,
     ),
   };
   res.json({ data: stats });

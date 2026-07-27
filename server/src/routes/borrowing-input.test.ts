@@ -21,6 +21,9 @@ test('invalid ids and due dates are rejected', async (t) => {
     { field: 'missing due_date', input: { member_id: 1, book_id: 2 } },
     { field: 'malformed due_date', input: { ...valid, due_date: '2026/08/26' } },
     { field: 'impossible due_date', input: { ...valid, due_date: '2026-13-99' } },
+    { field: 'non-leap February 29', input: { ...valid, due_date: '2026-02-29' } },
+    { field: 'February 30', input: { ...valid, due_date: '2026-02-30' } },
+    { field: 'April 31', input: { ...valid, due_date: '2026-04-31' } },
   ];
 
   for (const { field, input } of cases) {
@@ -28,4 +31,8 @@ test('invalid ids and due dates are rejected', async (t) => {
       assert.equal(validateBorrowingInput(input).ok, false);
     });
   }
+});
+
+test('leap-day due date is accepted', () => {
+  assert.equal(validateBorrowingInput({ member_id: 1, book_id: 2, due_date: '2024-02-29' }).ok, true);
 });

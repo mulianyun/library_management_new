@@ -5,6 +5,7 @@ import { History, Plus, Undo2 } from 'lucide-react';
 import Loading from '@/components/Loading';
 import { Button } from '@/components/ui/button';
 import { api, type ApiError } from '@/api/client';
+import { isOverdueDate } from '@/lib/date';
 import type { BorrowingRecordView } from '@/types/models';
 
 export default function BorrowingListPage() {
@@ -31,8 +32,6 @@ export default function BorrowingListPage() {
       .then(fetchList)
       .catch((e: ApiError) => window.alert(`归还失败: ${e.message}`));
   };
-
-  const now = formatLocalDateTime(new Date());
 
   return (
     <div>
@@ -73,11 +72,14 @@ export default function BorrowingListPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {borrowings.map((b) => {
-                const isOverdue = b.due_date < now;
+                const isOverdue = isOverdueDate(b.due_date);
                 return (
                   <tr key={b.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3">
-                      <Link to={`/books/${b.book_id}`} className="text-[var(--color-primary)] hover:underline font-medium">
+                      <Link
+                        to={`/books/${b.book_id}`}
+                        className="text-[var(--color-primary)] hover:underline font-medium"
+                      >
                         {b.book_title}
                       </Link>
                     </td>
@@ -87,7 +89,9 @@ export default function BorrowingListPage() {
                       </Link>
                     </td>
                     <td className="px-4 py-3 text-gray-700 tabular-nums">{b.borrow_date}</td>
-                    <td className={`px-4 py-3 tabular-nums ${isOverdue ? 'text-red-600 font-medium' : 'text-gray-700'}`}>
+                    <td
+                      className={`px-4 py-3 tabular-nums ${isOverdue ? 'text-red-600 font-medium' : 'text-gray-700'}`}
+                    >
                       {b.due_date}
                     </td>
                     <td className="px-4 py-3">
@@ -113,14 +117,5 @@ export default function BorrowingListPage() {
         </div>
       )}
     </div>
-  );
-}
-
-/** 生成与数据库 datetime('now','localtime') 同格式的本地时间串, 用于逾期比较 */
-function formatLocalDateTime(date: Date): string {
-  const pad = (n: number) => n.toString().padStart(2, '0');
-  return (
-    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
-    `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
   );
 }

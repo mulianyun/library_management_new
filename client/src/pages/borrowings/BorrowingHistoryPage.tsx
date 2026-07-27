@@ -55,7 +55,10 @@ export default function BorrowingHistoryPage() {
               {records.map((r) => (
                 <tr key={r.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    <Link to={`/books/${r.book_id}`} className="text-[var(--color-primary)] hover:underline font-medium">
+                    <Link
+                      to={`/books/${r.book_id}`}
+                      className="text-[var(--color-primary)] hover:underline font-medium"
+                    >
                       {r.book_title}
                     </Link>
                   </td>

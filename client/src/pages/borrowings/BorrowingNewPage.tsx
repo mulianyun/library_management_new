@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Loading from '@/components/Loading';
 import { Button } from '@/components/ui/button';
 import { api, type ApiError } from '@/api/client';
+import { formatLocalDate } from '@/lib/date';
 import type { Book, Member } from '@/types/models';
 
 const BORROW_DAYS = 30;
@@ -11,7 +12,7 @@ const BORROW_DAYS = 30;
 function defaultDueDate(): string {
   const d = new Date();
   d.setDate(d.getDate() + BORROW_DAYS);
-  return d.toISOString().split('T')[0];
+  return formatLocalDate(d);
 }
 
 export default function BorrowingNewPage() {

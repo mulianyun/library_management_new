@@ -6,7 +6,7 @@ export interface BorrowingInput {
 
 export type BorrowingInputResult = { ok: true; value: BorrowingInput } | { ok: false; error: string };
 
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export function validateBorrowingInput(body: unknown): BorrowingInputResult {
   if (!isRecord(body)) {
@@ -19,7 +19,7 @@ export function validateBorrowingInput(body: unknown): BorrowingInputResult {
   if (!bookId.ok) return bookId;
 
   const dueDate = body.due_date;
-  if (typeof dueDate !== 'string' || !DATE_PATTERN.test(dueDate) || Number.isNaN(Date.parse(dueDate))) {
+  if (typeof dueDate !== 'string' || !isValidDateOnly(dueDate)) {
     return { ok: false, error: '应还日期必须是 YYYY-MM-DD 格式的有效日期' };
   }
 
@@ -31,6 +31,20 @@ export function validateBorrowingInput(body: unknown): BorrowingInputResult {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isValidDateOnly(value: string): boolean {
+  const match = DATE_PATTERN.exec(value);
+  if (!match) return false;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(0);
+  date.setUTCHours(0, 0, 0, 0);
+  date.setUTCFullYear(year, month - 1, day);
+
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 }
 
 function requiredId(value: unknown, label: string): { ok: true; value: number } | { ok: false; error: string } {
