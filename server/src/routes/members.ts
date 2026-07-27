@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import db from '../db/connection.js';
-import type { Member, MemberInput, BorrowingRecordView } from '../types/models.js';
+import type { Member, BorrowingRecordView } from '../types/models.js';
+import { validateMemberInput } from './member-input.js';
 
 const router = Router();
 
@@ -45,11 +46,12 @@ router.get('/:id', (req: Request, res: Response) => {
 
 // POST /api/members — 创建
 router.post('/', (req: Request, res: Response) => {
-  const { name, email, phone, address } = req.body as MemberInput;
-  if (!name || !name.trim()) return res.status(400).json({ error: '姓名为必填项' });
+  const input = validateMemberInput(req.body);
+  if (!input.ok) return res.status(400).json({ error: input.error });
+  const { name, email, phone, address } = input.value;
   const result = db
     .prepare('INSERT INTO members (name, email, phone, address) VALUES (?, ?, ?, ?)')
-    .run(name.trim(), email || null, phone || null, address || null);
+    .run(name, email || null, phone || null, address || null);
   res.status(201).json({ data: { id: Number(result.lastInsertRowid), ok: true } });
 });
 
@@ -59,11 +61,12 @@ router.put('/:id', (req: Request, res: Response) => {
   if (id === null) return res.status(400).json({ error: '无效的会员 ID' });
   const member = db.prepare('SELECT * FROM members WHERE id = ?').get(id) as Member | undefined;
   if (!member) return res.status(404).json({ error: '会员不存在' });
-  const { name, email, phone, address } = req.body as MemberInput;
-  if (!name || !name.trim()) return res.status(400).json({ error: '姓名为必填项' });
+  const input = validateMemberInput(req.body);
+  if (!input.ok) return res.status(400).json({ error: input.error });
+  const { name, email, phone, address } = input.value;
   db.prepare(
     `UPDATE members SET name=?, email=?, phone=?, address=?, updated_at=datetime('now','localtime') WHERE id=?`,
-  ).run(name.trim(), email || null, phone || null, address || null, id);
+  ).run(name, email || null, phone || null, address || null, id);
   res.json({ data: { ok: true } });
 });
 
@@ -75,9 +78,9 @@ router.delete('/:id', (req: Request, res: Response) => {
   const member = db.prepare('SELECT * FROM members WHERE id = ?').get(id) as Member | undefined;
   if (!member) return res.status(404).json({ error: '会员不存在' });
   const active = (
-    db
-      .prepare(`SELECT COUNT(*) AS c FROM borrowing_records WHERE member_id = ? AND status = 'borrowed'`)
-      .get(id) as { c: number }
+    db.prepare(`SELECT COUNT(*) AS c FROM borrowing_records WHERE member_id = ? AND status = 'borrowed'`).get(id) as {
+      c: number;
+    }
   ).c;
   if (active > 0) return res.status(409).json({ error: '该会员有未归还的图书, 无法删除' });
   const del = db.transaction(() => {

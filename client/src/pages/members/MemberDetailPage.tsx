@@ -29,11 +29,8 @@ export default function MemberDetailPage() {
 
   if (loading) return <Loading />;
   if (error)
-    return (
-      <div className="bg-red-50 text-red-700 border border-red-200 px-4 py-3 rounded-md text-sm">{error}</div>
-    );
-  if (!member)
-    return <div className="bg-white rounded-lg shadow-sm p-8 text-center text-gray-400">会员不存在</div>;
+    return <div className="bg-red-50 text-red-700 border border-red-200 px-4 py-3 rounded-md text-sm">{error}</div>;
+  if (!member) return <div className="bg-white rounded-lg shadow-sm p-8 text-center text-gray-400">会员不存在</div>;
 
   return (
     <div>
@@ -73,7 +70,10 @@ export default function MemberDetailPage() {
               {records.map((r) => (
                 <tr key={r.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    <Link to={`/books/${r.book_id}`} className="text-[var(--color-primary)] hover:underline font-medium">
+                    <Link
+                      to={`/books/${r.book_id}`}
+                      className="text-[var(--color-primary)] hover:underline font-medium"
+                    >
                       {r.book_title}
                     </Link>
                   </td>
